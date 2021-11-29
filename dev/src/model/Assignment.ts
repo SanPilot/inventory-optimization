@@ -12,4 +12,15 @@ export class Assignment {
   constructor() {
     this._assignment = new Map<Customer, Product[]>();
   }
+
+  productsOf(customer: Customer) {
+    return this._assignment.get(customer) ?? [];
+  }
+
+  addProduct(customer: Customer, product: Product) {
+    const products = this.productsOf(customer);
+    this._assignment.set(customer, [...products, product]);
+    return this;
+  }
+
 }
