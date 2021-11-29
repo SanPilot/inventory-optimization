@@ -1,0 +1,38 @@
+CS4100: Artificial Intelligence
+Final Project Brainstorm
+28 November 2021
+================
+Variety Packs with Contraints and Preferences
+
+The Model - as simple as possible
+	Handles inventory
+	Class represents possible distribution of items between inventory and customer orders
+		Possibly using hash-maps keyed on customer ids
+	Languages: JS/TS (web-based UI), Python or Java (terminal UI)
+	Fitness function to evaluate an assignment - see weighted CSP below
+
+Approaches:
+	Weighted CSP to represent the problem
+		Either part of the model or a seperate fitness function to evaluate score/fitness of an assignment
+		Define unary/binary/k-ary contraints as functions
+	Trivial solution: experiment with DFS/BFS/A* search to find a optimal solution, determine if possible
+	Local-search:
+		Hill-climbing - find the action with the greatest reward
+			w/ simulated annealing - add random heat to calculated rewards
+		Genetic algorithms - "fitness" of solution determines the probability of being selected for the next generation
+	Reinforcement Learning:
+		Approximate Q-learning with weighted parameters
+			Reward function is the increase in fitness
+
+How to present
+	Text/terminal-based UI	- fast to implement, not as visually impressive
+	Web UI					- slower to implement, more visual and presentable
+								- completely frontend based to reduce complexity and dev time
+								- possible add'l interactive feature - students can enter orders during the presention
+
+
+Pivot ideas
+	1. Tracking COVID waves throughout US states using Bayesian HMMs/LSTMs
+		Correlate flight/highway travel data with historal COVID cases data
+		Generate possible heatmaps/animations of COVID waves
+		Predict future COVID hotspots
