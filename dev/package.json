@@ -4,6 +4,7 @@
   "description": "A final project for CS4100",
   "main": "build/index.js",
   "scripts": {
+    "start": "node .",
     "test": "jest"
   },
   "repository": {
