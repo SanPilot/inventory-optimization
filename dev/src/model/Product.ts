@@ -1,7 +1,6 @@
 /**
  * Encodes the information associated with a product. This includes the name, cost.
  */
-
 export class Product {
     private _name: string;
     private _cost: number;

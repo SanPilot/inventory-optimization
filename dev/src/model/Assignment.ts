@@ -6,7 +6,7 @@
 import { Product } from './Product';
 import { Customer } from './Customer';
 
-class Assignment {
+export class Assignment {
   private _assignment: Map<Customer, Product[]>;
 
   constructor() {

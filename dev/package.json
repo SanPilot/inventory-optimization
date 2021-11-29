@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/packard-j/ai-project#readme",
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "@types/node": "^16.11.10",
+    "fast-check": "^2.20.0",
+    "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   }
 }

@@ -4,7 +4,7 @@
 
 import { Product } from "./Product";
 
-class Inventory {
+export class Inventory {
   private _inventory: Map<Product, number>;
 
   constructor() {
