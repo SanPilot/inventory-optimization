@@ -22,4 +22,8 @@ export class Inventory {
     return this._inventory.get(product) ?? 0;
   }
 
+  products(): Product[] {
+    return Array.from(this._inventory.keys());
+  }
+
 }
