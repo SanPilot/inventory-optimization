@@ -9,7 +9,8 @@ import _ from "lodash";
 import { Order } from './Order';
 
 export class Assignment {
-  private _assignment: Map<Customer, Set<Product>;
+
+  private _assignment: Map<Customer, Set<Product>>;
 
   constructor(assignment: Map<Customer, Set<Product>> = new Map()) {
     this._assignment = assignment;
