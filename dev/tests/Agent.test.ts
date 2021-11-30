@@ -9,6 +9,14 @@ describe("search agent", () => {
     expect(agent.assign([], new Inventory()))
       .toEqual(new Assignment());
   });
+  test("never assigns customers products they are allergic to", () => {
+    fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      const assignment = agent.assign(orders, inventory);
+      expect(
+        orders.every(([customer]) => !customer.isAllergicToAny(assignment.productsOf(customer)))
+      )
+    }))
+  })
 });
 
 describe("problem generator", () => {

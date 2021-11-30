@@ -13,4 +13,8 @@ export class Customer {
         this._preferences = preferences;
         this.allergies = allergies;
     }
+
+    isAllergicToAny(products: Product[]) {
+        return products.some(product => this.allergies.has(product));
+    }
 }
