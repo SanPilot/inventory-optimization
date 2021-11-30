@@ -29,19 +29,20 @@ describe("problem generator", () => {
 
 function arbitraryProblem(maxOrderSize: number): fc.Arbitrary<[Order[], Inventory]> {
   return arbitraryProducts().chain(products =>
-    fc.tuple(fc.array(arbitraryOrder(products, maxOrderSize)), arbitraryInventory(products)));
+    fc.tuple(fc.array(arbitraryOrder(products, maxOrderSize), {maxLength: 10}), arbitraryInventory(products)));
 }
 
 function arbitraryProducts(): fc.Arbitrary<Product[]> {
   return fc.set(
-    fc.tuple(fc.string(), fc.integer({min: 0}))
-      .map(([name, cost]) => new Product(name, cost))
+    fc.tuple(fc.string(), fc.integer({min: 0, max: 100*20}))
+      .map(([name, cost]) => new Product(name, cost)),
+    {minLength: 1, maxLength: 10}
   );
 }
 
 function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> { 
   return fc.array(
-    fc.nat(), {minLength: products.length, maxLength: products.length}
+    fc.nat({max: 10}), {minLength: products.length, maxLength: products.length}
     ).map(qs => {
       return new Inventory(
         products.map((product, index) => [product, qs[index]])

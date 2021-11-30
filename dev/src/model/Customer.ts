@@ -14,7 +14,11 @@ export class Customer {
         this.allergies = allergies;
     }
 
-    isAllergicToAny(products: Product[]) {
-        return products.some(product => this.allergies.has(product));
+    isAllergicTo(product: Product): boolean {
+        return this.allergies.has(product);
+    }
+
+    isAllergicToAny(products: Product[]): boolean {
+        return products.some(product => this.isAllergicTo(product));
     }
 }

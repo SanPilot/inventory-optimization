@@ -6,22 +6,31 @@
 import { Product } from './Product';
 import { Customer } from './Customer';
 import _ from "lodash";
+import { Order } from './Order';
 
 export class Assignment {
   private _assignment: Map<Customer, Product[]>;
 
-  constructor() {
-    this._assignment = new Map<Customer, Product[]>();
+  constructor(assignment: Map<Customer, Product[]> = new Map()) {
+    this._assignment = assignment;
+  }
+
+  copy() {
+    return new Assignment(new Map(this._assignment));
   }
 
   productsGivenTo(customer: Customer): Product[] {
     return this._assignment.get(customer) ?? [];
   }
 
-  addProduct(customer: Customer, product: Product) {
+  assignProductToCustomer(customer: Customer, product: Product) {
     const products = this.productsGivenTo(customer);
     this._assignment.set(customer, [...products, product]);
     return this;
+  }
+
+  fulfillsOrders(orders: Order[]): boolean {
+    return orders.every(([customer, size]) => this.productsGivenTo(customer).length === size);
   }
 
   cost(): number {
