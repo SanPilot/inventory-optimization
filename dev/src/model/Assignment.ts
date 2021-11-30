@@ -8,19 +8,31 @@ import { Customer } from './Customer';
 import _ from "lodash";
 
 export class Assignment {
-  private _assignment: Map<Customer, Product[]>;
+  private _assignment: Map<Customer, Set<Product>>;
 
   constructor() {
-    this._assignment = new Map<Customer, Product[]>();
+    this._assignment = new Map<Customer, Set<Product>>();
   }
 
   productsGivenTo(customer: Customer): Product[] {
-    return this._assignment.get(customer) ?? [];
+    // convert set to array
+
+    return Array.from(this._assignment.get(customer) ?? []);
   }
 
   addProduct(customer: Customer, product: Product) {
-    const products = this.productsGivenTo(customer);
-    this._assignment.set(customer, [...products, product]);
+    // throw error if customer is allergic to product
+    if (customer.isAllergicToAny([product])) {
+      throw new Error(`Customer ${customer.name} is allergic to ${product.name}`);
+    }
+
+    // throw error if customer already has product
+    if (this.productsGivenTo(customer).includes(product)) {
+      throw new Error(`Customer ${customer.name} already has ${product.name}`);
+    }
+
+    const products: Product[] = this.productsGivenTo(customer);
+    this._assignment.set(customer, new Set(products.concat(product)));
     return this;
   }
 
@@ -31,7 +43,7 @@ export class Assignment {
     )
   }
 
-  costOfCustomer(customer: Customer) {
+  costOfCustomer(customer: Customer): number {
     return _.sum(
       this.productsGivenTo(customer).map(product => product.cost)
     );
