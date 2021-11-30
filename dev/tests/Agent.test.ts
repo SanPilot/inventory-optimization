@@ -1,6 +1,6 @@
 //<reference types="@types/jest"/>
-import {SearchAgent} from "../src/ai";
-import {Inventory, Assignment, Product, Order, Customer} from "../src/model";
+import { SearchAgent } from "../src/ai";
+import { Inventory, Assignment, Product, Order, Customer } from "../src/model";
 import fc from "fast-check";
 
 describe("search agent", () => {
@@ -40,7 +40,7 @@ function arbitraryProducts(): fc.Arbitrary<Product[]> {
   );
 }
 
-function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> { 
+function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> {
   return fc.array(
     fc.nat({max: 10}), {minLength: products.length, maxLength: products.length}
     ).map(qs => {
@@ -51,16 +51,16 @@ function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> {
 }
 
 function arbitraryOrder(products: Product[], maxOrderSize: number): fc.Arbitrary<Order> {
-  return fc.tuple(arbitraryCustomer(products), fc.nat({max: maxOrderSize}));
+  return fc.tuple(arbitraryCustomer(products), fc.nat({ max: maxOrderSize }));
 }
 
 function arbitraryCustomer(products: Product[]): fc.Arbitrary<Customer> {
-  return arbitraryPreferences(products)
-    .chain(prefs => arbitraryAllergies(products).map(allergies => new Customer(prefs, new Set(allergies))))
+  return fc.tuple(arbitraryPreferences(products), arbitraryAllergies(products), fc.string())
+    .map(([prefs, allergies, name]) => new Customer(prefs, new Set(allergies), name));
 }
 
 function arbitraryPreferences(products: Product[]): fc.Arbitrary<Map<Product, number>> {
-  return fc.array(fc.float(), {minLength: products.length, maxLength: products.length}).map(prefs => new Map(prefs.map((val, index) => [products[index], val])));
+  return fc.array(fc.float(), { minLength: products.length, maxLength: products.length }).map(prefs => new Map(prefs.map((val, index) => [products[index], val])));
 }
 
 function arbitraryAllergies(products: Product[]): fc.Arbitrary<Product[]> {
