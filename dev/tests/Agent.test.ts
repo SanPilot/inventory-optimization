@@ -13,7 +13,7 @@ describe("search agent", () => {
     fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
       const assignment = agent.assign(orders, inventory);
       expect(
-        orders.every(([customer]) => !customer.isAllergicToAny(assignment.productsOf(customer)))
+        orders.every(([customer]) => !customer.isAllergicToAny(assignment.productsGivenTo(customer)))
       )
     }))
   })
