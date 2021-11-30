@@ -5,9 +5,21 @@
 import { Product } from "./Product";
 
 export class Inventory {
+  
   private _inventory: Map<Product, number>;
 
-  constructor() {
-    this._inventory = new Map();
+  constructor(quantities: [Product, number][] = []) {
+    this._inventory = new Map(quantities);
   }
+
+  addProduct(product: Product, quantity: number): this {
+    const existing = this.quantityOf(product);
+    this._inventory.set(product, existing + quantity);
+    return this;
+  }
+
+  quantityOf(product: Product): number {
+    return this._inventory.get(product) ?? 0;
+  }
+
 }

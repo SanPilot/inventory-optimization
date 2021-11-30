@@ -9,8 +9,8 @@ export class Customer {
     private _preferences: Map<Product, number>;
     private allergies: Set<Product>;
 
-    constructor() {
-        this._preferences = new Map<Product, number>();
-        this.allergies = new Set<Product>();
+    constructor(preferences: Map<Product, number>, allergies: Set<Product>) {
+        this._preferences = preferences;
+        this.allergies = allergies;
     }
 }
