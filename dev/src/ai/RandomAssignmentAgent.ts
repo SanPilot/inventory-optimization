@@ -31,7 +31,7 @@ export class RandomAssignmentAgent implements Agent {
 
         // try assigning that product to the customer
         try {
-          assignment.addProduct(customer, product);
+          assignment.assignProductToCustomer(customer, product);
           remainingQuantity--;
         } catch (e) {
           console.error(e);

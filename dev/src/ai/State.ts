@@ -23,7 +23,7 @@ export class State implements StateNode<Assignment> {
       return new State(this.assignment, this.orders.slice(1), this.inventory).getSuccessors();
     }
     return this.inventory.products()
-      .filter(product => !customer.isAllergicTo(product))
+      .filter(product => !customer.isAllergicTo(product) && !this.assignment.hasProductAssignedToCustomer(customer, product))
       .map(product => new State(
         this.assignment.copy().assignProductToCustomer(customer, product),
         [[customer, size - 1], ...this.orders.slice(1)],

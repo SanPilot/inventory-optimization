@@ -22,7 +22,6 @@ export class Assignment {
 
   productsGivenTo(customer: Customer): Product[] {
     // convert set to array
-
     return Array.from(this._assignment.get(customer) ?? []);
   }
 
@@ -32,12 +31,16 @@ export class Assignment {
       throw new Error(`Customer ${customer.name} is allergic to ${product.name}`);
     }
     // throw error if customer already has product
-    if (this.productsGivenTo(customer).includes(product)) {
+    if (this.hasProductAssignedToCustomer(customer, product)) {
       throw new Error(`Customer ${customer.name} already has ${product.name}`);
     }
     const products: Product[] = this.productsGivenTo(customer);
     this._assignment.set(customer, new Set(products.concat(product)));
     return this;
+  }
+
+  hasProductAssignedToCustomer(customer: Customer, product: Product) {
+    return this.productsGivenTo(customer).includes(product);
   }
 
   fulfillsOrders(orders: Order[]): boolean {
