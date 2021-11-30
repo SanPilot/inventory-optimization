@@ -20,8 +20,8 @@ export class Customer {
         return this._allergies.has(product);
     }
 
-    isAllergicToAny(products: Product[]): boolean {
-        return products.some(product => this.isAllergicTo(product));
+    isAllergicToAny(products: Set<Product>): boolean {
+        return Array.from(products).some(product => this.isAllergicTo(product));
     }
 
     preferenceFor(product: Product): number {

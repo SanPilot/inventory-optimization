@@ -18,8 +18,8 @@ export class RandomAssignmentAgent implements Agent {
 
         // filter customers that are not allergic to the product and do not have the product already
         const compatibleCustomers = orders.filter(([customer]) =>
-          !customer.isAllergicToAny([product]) &&
-          !assignment.productsGivenTo(customer).includes(product));
+          !customer.isAllergicTo(product) &&
+          !assignment.hasProductAssignedToCustomer(customer, product));
 
         // if there are no customers that are not allergic to the product, skip this product
         if (compatibleCustomers.length === 0) {

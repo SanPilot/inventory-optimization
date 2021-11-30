@@ -20,31 +20,30 @@ export class Assignment {
     return new Assignment(new Map(this._assignment));
   }
 
-  productsGivenTo(customer: Customer): Product[] {
-    // convert set to array
-    return Array.from(this._assignment.get(customer) ?? []);
+  productsGivenTo(customer: Customer): Set<Product> {
+    return this._assignment.get(customer) ?? new Set();
   }
 
   assignProductToCustomer(customer: Customer, product: Product) {
     // throw error if customer is allergic to product
-    if (customer.isAllergicToAny([product])) {
+    if (customer.isAllergicTo(product)) {
       throw new Error(`Customer ${customer.name} is allergic to ${product.name}`);
     }
     // throw error if customer already has product
     if (this.hasProductAssignedToCustomer(customer, product)) {
       throw new Error(`Customer ${customer.name} already has ${product.name}`);
     }
-    const products: Product[] = this.productsGivenTo(customer);
-    this._assignment.set(customer, new Set(products.concat(product)));
+    const products = this.productsGivenTo(customer);
+    this._assignment.set(customer, new Set(products).add(product));
     return this;
   }
 
   hasProductAssignedToCustomer(customer: Customer, product: Product) {
-    return this.productsGivenTo(customer).includes(product);
+    return this.productsGivenTo(customer).has(product);
   }
 
   fulfillsOrders(orders: Order[]): boolean {
-    return orders.every(([customer, size]) => this.productsGivenTo(customer).length === size);
+    return orders.every(([customer, size]) => this.productsGivenTo(customer).size === size);
   }
 
   cost(): number {
@@ -56,7 +55,7 @@ export class Assignment {
 
   costOfCustomer(customer: Customer): number {
     return _.sum(
-      this.productsGivenTo(customer).map(product => product.cost)
+      Array.from(this.productsGivenTo(customer)).map(product => product.cost)
     );
   }
 
