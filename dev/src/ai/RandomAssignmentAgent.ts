@@ -1,3 +1,4 @@
+import {List} from "immutable";
 import { Agent } from "./Agent";
 import { Order, Inventory, Assignment, Customer } from "../model";
 
@@ -6,8 +7,8 @@ import { Order, Inventory, Assignment, Customer } from "../model";
  */
 export class RandomAssignmentAgent implements Agent {
 
-  assign(orders: Order[], inventory: Inventory): Assignment {
-    const assignment = new Assignment();
+  assign(orders: List<Order>, inventory: Inventory): Assignment {
+    let assignment = new Assignment();
 
     // for each product in the inventory
     for (const product of inventory.products()) {
@@ -17,21 +18,21 @@ export class RandomAssignmentAgent implements Agent {
       while (remainingQuantity > 0) {
 
         // filter customers that are not allergic to the product and do not have the product already
-        const compatibleCustomers = orders.filter(([customer]) =>
-          !customer.isAllergicTo(product) &&
-          !assignment.hasProductAssignedToCustomer(customer, product));
+        const compatibleCustomers = orders.filter(order =>
+          !order.customer.isAllergicTo(product) &&
+          !assignment.hasProductAssignedToCustomer(order.customer, product));
 
         // if there are no customers that are not allergic to the product, skip this product
-        if (compatibleCustomers.length === 0) {
+        if (compatibleCustomers.size === 0) {
           break;
         }
 
         // pick a random customer
-        const customer: Customer = compatibleCustomers[Math.floor(Math.random() * compatibleCustomers.length)][0];
+        const customer: Customer = compatibleCustomers.get(Math.floor(Math.random() * compatibleCustomers.size))!.customer;
 
         // try assigning that product to the customer
         try {
-          assignment.assignProductToCustomer(customer, product);
+          assignment = assignment.assignProductToCustomer(customer, product);
           remainingQuantity--;
         } catch (e) {
           console.error(e);
