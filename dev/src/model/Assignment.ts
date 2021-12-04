@@ -3,25 +3,16 @@
  * Can be evaluated for the score of the assignment.
  */
 
+import { Record, Map, Set, List } from "immutable";
 import { Product } from './Product';
 import { Customer } from './Customer';
 import _ from "lodash";
 import { Order } from './Order';
 
-export class Assignment {
-
-  private _assignment: Map<Customer, Set<Product>>;
-
-  constructor(assignment: Map<Customer, Set<Product>> = new Map()) {
-    this._assignment = assignment;
-  }
-
-  copy() {
-    return new Assignment(new Map(this._assignment));
-  }
+export class Assignment extends Record({products: Map<Customer, Set<Product>>()}) {
 
   productsGivenTo(customer: Customer): Set<Product> {
-    return this._assignment.get(customer) ?? new Set();
+    return this.products.get(customer) ?? Set();
   }
 
   assignProductToCustomer(customer: Customer, product: Product) {
@@ -33,29 +24,29 @@ export class Assignment {
     if (this.hasProductAssignedToCustomer(customer, product)) {
       throw new Error(`Customer ${customer.name} already has ${product.name}`);
     }
-    const products = this.productsGivenTo(customer);
-    this._assignment.set(customer, new Set(products).add(product));
-    return this;
+    return new Assignment({products: this.products.set(
+      customer,
+      this.productsGivenTo(customer).add(product)
+    )});
   }
 
   hasProductAssignedToCustomer(customer: Customer, product: Product) {
     return this.productsGivenTo(customer).has(product);
   }
 
-  fulfillsOrders(orders: Order[]): boolean {
-    return orders.every(([customer, size]) => this.productsGivenTo(customer).size === size);
+  fulfillsOrders(orders: List<Order>): boolean {
+    return orders.every(order => this.productsGivenTo(order.customer).size === order.size);
   }
 
   cost(): number {
     return _.sum(
-      Array.from(this._assignment.keys())
-        .map(customer => this.costOfCustomer(customer))
+      Array.from(this.products.keys()).map(customer => this.costOfCustomer(customer))
     )
   }
 
   costOfCustomer(customer: Customer): number {
     return _.sum(
-      Array.from(this.productsGivenTo(customer)).map(product => product.cost)
+      this.productsGivenTo(customer).map(product => product.cost).toArray()
     );
   }
 
