@@ -2,6 +2,7 @@
 import { SearchAgent } from "../src/ai";
 import { Inventory, Assignment, Product, Order, Customer } from "../src/model";
 import fc from "fast-check";
+import { RandomAssignmentAgent } from "../src/ai/RandomAssignmentAgent";
 
 describe("search agent", () => {
   const agent = new SearchAgent();
@@ -15,7 +16,23 @@ describe("search agent", () => {
       expect(
         orders.every(([customer]) => !customer.isAllergicToAny(assignment.productsGivenTo(customer)))
       )
-    }))
+    }), {numRuns: 10});
+  })
+});
+
+describe("random agent", () => {
+  const agent = new RandomAssignmentAgent();
+  test("can assign products to customers", () => {
+    expect(agent.assign([], new Inventory()))
+      .toEqual(new Assignment());
+  });
+  test("never assigns customers products they are allergic to", () => {
+    fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      const assignment = agent.assign(orders, inventory);
+      expect(
+        orders.every(([customer]) => !customer.isAllergicToAny(assignment.productsGivenTo(customer)))
+      )
+    }), {numRuns: 100});
   })
 });
 
