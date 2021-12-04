@@ -2,7 +2,9 @@
 import {List, Set, Map} from "immutable";
 import { SearchAgent } from "../src/ai";
 import { Inventory, Assignment, Product, Order, Customer } from "../src/model";
+import { stringify } from "csv";
 import fc from "fast-check";
+import fs from "fs";
 
 describe("search agent", () => {
   const agent = new SearchAgent();
@@ -10,13 +12,17 @@ describe("search agent", () => {
     expect(agent.assign(List(), new Inventory()))
       .toEqual(new Assignment());
   });
-  test("never assigns customers products they are allergic to", () => {
+  test("run samples to produce csv file", () => {
+    const document = stringify({columns: ["Products", "Orders", "Runtime (ms)"], header: true});
+    const file = fs.createWriteStream("tests.csv");
+    document.pipe(file);
     fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      const start = new Date().getTime();
       const assignment = agent.assign(List(orders), inventory);
-      expect(
-        orders.every(order => !order.customer.isAllergicToAny(assignment.productsGivenTo(order.customer)))
-      )
-    }), {numRuns: 15})
+      const duration = new Date().getTime() - start;
+      document.write([inventory.products().size, orders.length, duration]);
+    }), {numRuns: 10});
+    document.end();
   })
 });
 
