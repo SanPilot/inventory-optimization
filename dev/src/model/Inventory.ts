@@ -1,6 +1,7 @@
 
-import {Record, Map, List} from "immutable";
+import {Record, Map, Set} from "immutable";
 import {Product} from "./Product";
+import _ from "lodash";
 
 /**
  * Stores the available products, and the quantity of each product.
@@ -24,8 +25,12 @@ export class Inventory extends Record({quantities: Map<Product,number>()}) {
     return this.quantities.get(product) ?? 0;
   }
 
-  products(): List<Product> {
-    return this.quantities.keySeq().filter(product => this.quantityOf(product) > 0).toList();
+  products(): Set<Product> {
+    return Set(this.quantities.keys()).filter(product => this.quantityOf(product) > 0);
+  }
+
+  value(): number {
+    return _.sum(Array.from(this.quantities.values()));
   }
 
 }

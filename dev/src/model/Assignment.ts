@@ -40,13 +40,13 @@ export class Assignment extends Record({products: Map<Customer, Set<Product>>()}
 
   cost(): number {
     return _.sum(
-      this.products.keySeq().map(customer => this.costOfCustomer(customer)).toJS()
+      Array.from(this.products.keys()).map(customer => this.costOfCustomer(customer))
     )
   }
 
   costOfCustomer(customer: Customer): number {
     return _.sum(
-      this.productsGivenTo(customer).map(product => product.cost).toJS()
+      this.productsGivenTo(customer).map(product => product.cost).toArray()
     );
   }
 

@@ -1,8 +1,8 @@
-import {ValueObject, Collection, Set} from "immutable";
+import {ValueObject, Set} from "immutable";
 
 export interface StateNode<T> extends ValueObject {
 
-  getSuccessors(): Collection.Indexed<StateNode<T>>;
+  getSuccessors(): Set<StateNode<T>>;
 
   evaluate(): number;
 

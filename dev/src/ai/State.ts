@@ -1,4 +1,4 @@
-import { Record, List } from "immutable";
+import { Record, List, Set } from "immutable";
 import { Assignment, Inventory, Order } from "../model";
 import { StateNode } from "./Graph";
 import _ from "lodash";
@@ -9,9 +9,9 @@ export class State extends Record({
   inventory: new Inventory()
 }) implements StateNode<Assignment> {
 
-  getSuccessors(): List<State> {
+  getSuccessors(): Set<State> {
     if (this.orders.size === 0) {
-      return List();
+      return Set();
     }
     const order = this.orders.get(0)!;
     if (order.size === 0) {
@@ -37,7 +37,7 @@ export class State extends Record({
 
   evaluate(): number {
     // TODO: incorporate customer preferences
-    return -this.assignment.cost();
+    return -this.assignment.cost() // SLOW: - (this.inventory.value() * 2);
   }
 
   toResult(): Assignment {
