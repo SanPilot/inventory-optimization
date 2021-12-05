@@ -19,7 +19,6 @@ describe("search agent", () => {
     const document = stringify({ columns: ["Products", "Orders", "Runtime (ms)"], header: true });
     const file = fs.createWriteStream("search_" + new Date().toISOString() + ".csv");
     document.pipe(file);
-    document.pipe(process.stdout);
     fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
       const start = new Date().getTime();
       const assignment = agent.assign(List(orders), inventory);
