@@ -28,9 +28,9 @@ export class GraphSearch<T> {
     while (frontier.length > 0) {
       const node = frontier.pop()!;
       visited = visited.add(node);
-      if (node.isTerminal()) {
-        continue;
-      }
+      // if (node.isTerminal()) {
+      //   continue;
+      // }
       if (node.evaluate(this.featureVectors) > bestEvaluation) {
         bestNode = node;
       }

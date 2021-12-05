@@ -17,7 +17,7 @@ function arbitraryProducts(): fc.Arbitrary<Product[]> {
 
 function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> {
   return fc.array(
-    fc.nat({max: 4}), {minLength: products.length, maxLength: products.length}
+    fc.integer({min: 1, max: 100}), {minLength: products.length, maxLength: products.length}
     ).map(qs => {
       return new Inventory({
         quantities: Map(List(products).map((product, index) => [product, qs[index]]))
