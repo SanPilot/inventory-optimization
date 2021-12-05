@@ -9,7 +9,7 @@ export function arbitraryProblem(maxOrderSize: number): fc.Arbitrary<[Order[], I
 
 function arbitraryProducts(): fc.Arbitrary<Product[]> {
   return fc.set(
-    fc.tuple(fc.string(), fc.integer({min: 0, max: 100*20}))
+    fc.tuple(fc.string(), fc.float())
       .map(([name, cost]) => new Product({name, cost})),
     {minLength: 1, maxLength: 10}
   );

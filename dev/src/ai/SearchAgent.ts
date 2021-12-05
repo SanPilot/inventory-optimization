@@ -11,6 +11,7 @@ export class SearchAgent implements Agent {
     const state = new State({
       assignment: new Assignment(),
       orders,
+      originalOrders: orders,
       inventory
     });
     return new GraphSearch(featureVectors).depthFirstSearch(state).toResult().assignment;

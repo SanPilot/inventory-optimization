@@ -3,10 +3,11 @@ import { Assignment, Inventory, Order } from "../model";
 import { StateNode } from "./Graph";
 import _ from "lodash";
 
-export type ProblemState = RecordOf<{ assignment: Assignment, orders: List<Order>, inventory: Inventory }>;
+export type ProblemState = RecordOf<{ assignment: Assignment, orders: List<Order>, originalOrders: List<Order>, inventory: Inventory }>;
 
 export class State extends Record({
   assignment: new Assignment(),
+  originalOrders: List<Order>(),
   orders: List<Order>(),
   inventory: new Inventory()
 }) implements StateNode<ProblemState> {
@@ -20,6 +21,7 @@ export class State extends Record({
       return new State({
         assignment: this.assignment,
         orders: this.orders.skip(1),
+        originalOrders: this.originalOrders,
         inventory: this.inventory
       }).getSuccessors();
     }
@@ -29,6 +31,7 @@ export class State extends Record({
       .map(product => new State({
         assignment: this.assignment.assignProductToCustomer(order.customer, product),
         orders: List([new Order({ customer: order.customer, size: order.size - 1 })]).concat(this.orders.skip(1)),
+        originalOrders: this.originalOrders,
         inventory: this.inventory.removeProduct(product, 1)
       }));
   }
