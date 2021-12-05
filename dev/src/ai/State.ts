@@ -38,14 +38,9 @@ export class State extends Record({
   }
 
   evaluate(features: List<[(s: ProblemState) => number, number, number]>): number {
-
     return features.reduce((acc, feature) => {
       return acc + (feature[1] != 0 ? (feature[0](this) * feature[1] + feature[2]) : 0);
     }, 0);
-
-
-    // TODO: incorporate customer preferences
-    return -this.assignment.cost() // SLOW: - (this.inventory.value() * 2);
   }
 
   toResult(): ProblemState {
