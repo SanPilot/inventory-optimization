@@ -9,7 +9,11 @@ import { Customer } from './Customer';
 import _ from "lodash";
 import { Order } from './Order';
 
-export class Assignment extends Record<{products: Map<Customer, Set<Product>>, cost?: number}>({products: Map<Customer, Set<Product>>(), cost: undefined}) {
+export class Assignment extends Record<{ products: Map<Customer, Set<Product>>, cost?: number }>({ products: Map<Customer, Set<Product>>(), cost: undefined }) {
+
+  numAssigned(): number {
+    return this.products.valueSeq().reduce((acc, products) => acc + products.size, 0);
+  }
 
   productsGivenTo(customer: Customer): Set<Product> {
     return this.products.get(customer) ?? Set();
@@ -24,10 +28,12 @@ export class Assignment extends Record<{products: Map<Customer, Set<Product>>, c
     if (this.hasProductAssignedToCustomer(customer, product)) {
       throw new Error(`Customer ${customer.name} already has ${product.name}`);
     }
-    return new Assignment({products: this.products.set(
-      customer,
-      this.productsGivenTo(customer).add(product)
-    ), cost: this.calculateCost() + product.cost});
+    return new Assignment({
+      products: this.products.set(
+        customer,
+        this.productsGivenTo(customer).add(product)
+      ), cost: this.calculateCost() + product.cost
+    });
   }
 
   hasProductAssignedToCustomer(customer: Customer, product: Product) {

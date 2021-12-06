@@ -21,12 +21,14 @@ export class GraphSearch<T> {
   }
 
   depthFirstSearch(root: StateNode<T>): StateNode<T> {
+    let numStatesExplored = 0;
     const frontier: StateNode<T>[] = [root];
     let visited = Set<StateNode<T>>();
     let bestEvaluation = -Infinity;
     let bestNode = root;
     while (frontier.length > 0) {
       const node = frontier.pop()!;
+      numStatesExplored++;
       visited = visited.add(node);
       // if (node.isTerminal()) {
       //   continue;
@@ -40,6 +42,7 @@ export class GraphSearch<T> {
           frontier.push(neighbor)
         });
     }
+    console.log("Explored " + numStatesExplored + " states.");
     return bestNode;
   }
 

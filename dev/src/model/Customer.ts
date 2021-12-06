@@ -23,4 +23,8 @@ export class Customer extends Record({
         return this.preferences.get(product) ?? 0;
     }
 
+    averagePreference(): number {
+        return this.preferences.reduce((sum, preference) => sum + preference, 0) / this.preferences.size;
+    }
+
 }

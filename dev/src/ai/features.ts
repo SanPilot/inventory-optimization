@@ -5,7 +5,7 @@ export type FeatureVector<T> = [(s: T) => number, number, number];
 
 export const costOfAssignment = (state: ProblemState): number => state.assignment.calculateCost();
 
-export const valueOfInventory = (state: ProblemState): number => state.inventory.value();
+export const valueOfInventory = (state: ProblemState): number => state.inventory.totalValue();
 
 export const customerSatisfaction = (state: ProblemState): number => state.assignment.calculateSatisfaction();
 
