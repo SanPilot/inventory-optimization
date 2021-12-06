@@ -12,8 +12,8 @@ export const customerSatisfaction = (state: ProblemState): number => state.assig
 export const unfilledOrders = (state: ProblemState): number => state.orders.count(o => o.size > 0) / state.originalOrders.size;
 
 export const defaultFeatureVectors: List<FeatureVector<ProblemState>> = List([
-    [costOfAssignment, -1, 0],
-    [valueOfInventory, -1.1, 0],
-    [customerSatisfaction, 100, 0],
-    [unfilledOrders, -1.1, 0]
+//    [costOfAssignment, -1, 0],
+//    [valueOfInventory, -1.1, 0],
+    [customerSatisfaction, 1, 0]
+//    [unfilledOrders, -1.1, 0]
 ]);
