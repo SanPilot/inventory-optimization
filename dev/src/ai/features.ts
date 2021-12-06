@@ -14,6 +14,6 @@ export const unfilledOrders = (state: ProblemState): number => state.orders.coun
 export const defaultFeatureVectors: List<FeatureVector<ProblemState>> = List([
     [costOfAssignment, -1, 0],
     [valueOfInventory, -1.1, 0],
-    [customerSatisfaction, 10, 0],
+    [customerSatisfaction, 100, 0],
     [unfilledOrders, -1.1, 0]
 ]);

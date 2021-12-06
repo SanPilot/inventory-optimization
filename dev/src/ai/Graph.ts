@@ -33,8 +33,10 @@ export class GraphSearch<T> {
       // if (node.isTerminal()) {
       //   continue;
       // }
-      if (node.evaluate(this.featureVectors) > bestEvaluation) {
+      const evaluation = node.evaluate(this.featureVectors)
+      if (evaluation > bestEvaluation) {
         bestNode = node;
+        bestEvaluation = evaluation;
       }
       node.getSuccessors()
         .filter(neighbor => !visited.includes(neighbor))
