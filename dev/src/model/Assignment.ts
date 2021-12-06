@@ -65,4 +65,10 @@ export class Assignment extends Record<{ products: Map<Customer, Set<Product>>, 
     );
   }
 
+  toString() {
+    return this.products.keySeq()
+      .map(customer => `customer "${customer.name}" -> ${this.productsGivenTo(customer).map(product => `"${product.name}" $${product.cost}`).join(', ')}`)
+      .join('\n');
+  }
+
 }
