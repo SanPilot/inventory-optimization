@@ -9,7 +9,7 @@ export function arbitraryProblem(maxOrderSize: number): fc.Arbitrary<[Order[], I
 
 function arbitraryProducts(): fc.Arbitrary<Product[]> {
   return fc.set(
-    fc.tuple(fc.string(), fc.float())
+    fc.tuple(fc.string(), fc.float({min: 0.1}).map(cost => Math.round(cost * 100) / 100))
       .map(([name, cost]) => new Product({name, cost})),
     {minLength: 1, maxLength: 10}
   );
@@ -40,7 +40,7 @@ function arbitraryCustomer(products: Product[]): fc.Arbitrary<Customer> {
 }
 
 function arbitraryPreferences(products: Product[]): fc.Arbitrary<Map<Product, number>> {
-  return fc.array(fc.float(), { minLength: products.length, maxLength: products.length })
+  return fc.array(fc.float({min: 0.1}).map(pref => Math.round(pref * 100) / 100), { minLength: products.length, maxLength: products.length })
            .map(prefs => Map(prefs.map((val, index) => [products[index], val])));
 }
 
