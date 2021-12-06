@@ -17,20 +17,14 @@ export class State extends Record({
       return Set();
     }
     const order = this.orders.get(0)!;
-    if (order.size === 0) {
-      return new State({
-        assignment: this.assignment,
-        orders: this.orders.skip(1),
-        originalOrders: this.originalOrders,
-        inventory: this.inventory
-      }).getSuccessors();
-    }
     return this.inventory.products()
       .filter(product => !order.customer.isAllergicTo(product) &&
         !this.assignment.hasProductAssignedToCustomer(order.customer, product))
       .map(product => new State({
         assignment: this.assignment.assignProductToCustomer(order.customer, product),
-        orders: List([new Order({ customer: order.customer, size: order.size - 1 })]).concat(this.orders.skip(1)),
+        orders: order.size > 1 ?
+          List([new Order({ customer: order.customer, size: order.size - 1 })]).concat(this.orders.skip(1)) :
+          this.orders.skip(1),
         originalOrders: this.originalOrders,
         inventory: this.inventory.removeProduct(product, 1)
       }));
