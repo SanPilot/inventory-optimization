@@ -24,7 +24,7 @@ export class GraphSearch<T> {
     let numStatesExplored = 0;
     const frontier: StateNode<T>[] = [root];
     let visited = Set<StateNode<T>>();
-    let bestEvaluation = -Infinity;
+    let bestEvaluation = root.evaluate(this.featureVectors);
     let bestNode = root;
     while (frontier.length > 0) {
       const node = frontier.pop()!;
