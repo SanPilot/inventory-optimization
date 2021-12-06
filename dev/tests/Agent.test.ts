@@ -8,6 +8,7 @@ import fc from "fast-check";
 import { RandomAssignmentAgent } from "../src/ai/RandomAssignmentAgent";
 import fs from "fs";
 import { arbitraryProblem } from "../src/generator";
+import { defaultFeatureVectors } from "../src/ai/features";
 
 describe("search agent", () => {
   const agent = new SearchAgent();
@@ -26,6 +27,19 @@ describe("search agent", () => {
       document.write([inventory.products().size, orders.length, duration]);
     }), { numRuns: 10 });
     document.end();
+  });
+});
+
+describe("compare agents", () => {
+  test("random doesn't perform better (in evaluation) than graph search", () => {
+    fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      const randomAssignment = new RandomAssignmentAgent().assign(List(orders), inventory);
+      const optimalAssignment = new SearchAgent().assign(List(orders), inventory, defaultFeatureVectors);
+      console.log('random:', randomAssignment.toResult().assignment.toString());
+      console.log('optimal:', optimalAssignment.toResult().assignment.toString());
+      expect(optimalAssignment.evaluate(defaultFeatureVectors))
+        .toBeGreaterThanOrEqual(randomAssignment.evaluate(defaultFeatureVectors));
+    }), { seed: -710841889, path: "2:0:0:0:1:0:1:1:1:2:3:2:2:3:3:4:3:3:3:3:3:3", endOnFailure: true });
   })
 });
 

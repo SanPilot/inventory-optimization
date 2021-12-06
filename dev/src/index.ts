@@ -40,5 +40,5 @@ fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
     //document.write([agent.name, inventory.products().size, orders.length, inventory.products().size * orders.length, duration, finalState.evaluate(defaultFeatureVectors)]);
     console.log(`${agent.name} took ${duration}ms to assign ${inventory.products().size} products (${finalState.toResult().assignment.numAssigned()} / ${orders.reduce((acc, order) => acc + order.size, 0)}) to ${orders.length} orders with evaluation ${finalState.evaluate(defaultFeatureVectors)}`);
   })
-}), { numRuns: 100 });
+}), { numRuns: 100, seed: 0 });
 document.end();
