@@ -15,7 +15,7 @@ describe("search agent simple examples", () => {
     const assignment = new SearchAgent()
       .assign(orders, inventory, satisfactionOnly)
       .toResult().assignment;
-    expect(assignment.productsGivenTo(customerA)).toEqual(Set([productA]));
-    expect(assignment.productsGivenTo(customerB)).toEqual(Set());
+    expect(assignment.productsGivenTo(customerB)).toEqual(Set([productA]));
+    expect(assignment.productsGivenTo(customerA)).toEqual(Set());
   });
 });

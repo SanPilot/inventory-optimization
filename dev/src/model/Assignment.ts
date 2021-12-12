@@ -9,7 +9,7 @@ import { Customer } from './Customer';
 import _ from "lodash";
 import { Order } from './Order';
 
-export class Assignment extends Record<{ products: Map<Customer, Set<Product>>, cost?: number }>({ products: Map<Customer, Set<Product>>(), cost: undefined }) {
+export class Assignment extends Record({ products: Map<Customer, Set<Product>>() }) {
 
   numAssigned(): number {
     return this.products.valueSeq().reduce((acc, products) => acc + products.size, 0);
@@ -32,7 +32,7 @@ export class Assignment extends Record<{ products: Map<Customer, Set<Product>>, 
       products: this.products.set(
         customer,
         this.productsGivenTo(customer).add(product)
-      ), cost: this.calculateCost() + product.cost
+      )
     });
   }
 
@@ -45,9 +45,6 @@ export class Assignment extends Record<{ products: Map<Customer, Set<Product>>, 
   }
 
   calculateCost(): number {
-    if (this.cost !== undefined) {
-      return this.cost;
-    }
     return _.sum(
       Array.from(this.products.values())
         .flatMap(productsOfCustomer => productsOfCustomer.map(product => product.cost))

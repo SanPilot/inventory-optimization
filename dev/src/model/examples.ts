@@ -11,7 +11,7 @@ export const inventory = new Inventory({
 
 export const customerA = new Customer({
   preferences: Map([
-    [productA, 1]
+    [productA, 0]
   ]),
   allergies: Set(),
   name: "customer A"
@@ -19,7 +19,7 @@ export const customerA = new Customer({
 
 export const customerB = new Customer({
   preferences: Map([
-    [productA, 0]
+    [productA, 1]
   ]),
   allergies: Set(),
   name: "customer B"
