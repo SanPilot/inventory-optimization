@@ -39,7 +39,7 @@ describe("compare agents", () => {
       console.log('optimal:', optimalAssignment.toResult().assignment.toString());
       expect(optimalAssignment.evaluate(defaultFeatureVectors))
         .toBeGreaterThanOrEqual(randomAssignment.evaluate(defaultFeatureVectors));
-    }), { seed: -710841889, path: "2:0:0:0:1:0:1:1:1:2:3:2:2:3:3:4:3:3:3:3:3:3", endOnFailure: true });
+    }));
   })
 });
 

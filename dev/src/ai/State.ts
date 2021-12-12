@@ -1,5 +1,5 @@
 import { Record, List, Set, RecordOf } from "immutable";
-import { Assignment, Inventory, Order } from "../model";
+import { Assignment, Customer, Inventory, Order, orders, Product } from "../model";
 import { StateNode } from "./Graph";
 import _ from "lodash";
 
@@ -13,21 +13,42 @@ export class State extends Record({
 }) implements StateNode<ProblemState> {
 
   getSuccessors(): Set<State> {
-    if (this.orders.size === 0) {
-      return Set();
-    }
-    const order = this.orders.get(0)!;
+    return this.orders
+      .filter(order => order.size > 0)
+      .reduce((states, order) => states.concat(
+        this.assignableProducts(order.customer)
+          .map(product => this.assignProductToOrder(product, order))
+        ),
+        Set()
+      );
+  }
+
+  private assignableProducts(customer: Customer): Set<Product> {
     return this.inventory.products()
-      .filter(product => !order.customer.isAllergicTo(product) &&
-        !this.assignment.hasProductAssignedToCustomer(order.customer, product))
-      .map(product => new State({
-        assignment: this.assignment.assignProductToCustomer(order.customer, product),
-        orders: order.size > 1 ?
-          List([new Order({ customer: order.customer, size: order.size - 1 })]).concat(this.orders.skip(1)) :
-          this.orders.skip(1),
-        originalOrders: this.originalOrders,
-        inventory: this.inventory.removeProduct(product, 1)
-      }));
+      .filter(product =>
+        !customer.isAllergicTo(product) &&
+        !this.assignment.hasProductAssignedToCustomer(customer, product)
+      );
+  }
+
+  private assignProductToOrder(product: Product, order: Order): State {
+    return new State({
+      assignment: this.assignment.assignProductToCustomer(order.customer, product),
+      orders: this.replaceOrder(
+        order,
+        new Order({customer: order.customer, size: order.size - 1})
+      ),
+      originalOrders: this.originalOrders,
+      inventory: this.inventory.removeProduct(product, 1)
+    });
+  }
+
+  private replaceOrder(original: Order, replacement: Order): List<Order> {
+    return this.orders.update(
+      this.orders.findIndex(order => order.equals(original)),
+      original,
+      () => replacement
+    );
   }
 
   isTerminal(): boolean {
