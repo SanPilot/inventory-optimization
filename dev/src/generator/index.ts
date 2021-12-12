@@ -4,20 +4,20 @@ import { List, Set, Map } from "immutable";
 
 export function arbitraryProblem(maxOrderSize: number): fc.Arbitrary<[Order[], Inventory]> {
   return arbitraryProducts().chain(products =>
-    fc.tuple(fc.array(arbitraryOrder(products, maxOrderSize), {minLength: 1, maxLength: 10}), arbitraryInventory(products)));
+    fc.tuple(fc.array(arbitraryOrder(products, maxOrderSize), {minLength: 1, maxLength: 5}), arbitraryInventory(products)));
 }
 
 function arbitraryProducts(): fc.Arbitrary<Product[]> {
   return fc.set(
     fc.tuple(fc.string(), fc.float({min: 0.1}).map(cost => Math.round(cost * 100) / 100))
       .map(([name, cost]) => new Product({name, cost})),
-    {minLength: 1, maxLength: 10}
+    {minLength: 1, maxLength: 5}
   );
 }
 
 function arbitraryInventory(products: Product[]): fc.Arbitrary<Inventory> {
   return fc.array(
-    fc.integer({min: 1, max: 100}), {minLength: products.length, maxLength: products.length}
+    fc.integer({min: 1, max: 20}), {minLength: products.length, maxLength: products.length}
     ).map(qs => {
       return new Inventory({
         quantities: Map(List(products).map((product, index) => [product, qs[index]]))
