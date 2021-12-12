@@ -35,7 +35,7 @@ export class Inventory extends Record({ quantities: Map<Product, number>() }) {
   }
 
   quantityOf(product: Product): number {
-    return this.quantities.get(product) ?? 0;
+    return this.quantities.get(product, 0);
   }
 
   products(): Set<Product> {

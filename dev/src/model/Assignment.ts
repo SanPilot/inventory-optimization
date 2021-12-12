@@ -8,6 +8,7 @@ import { Product } from './Product';
 import { Customer } from './Customer';
 import _ from "lodash";
 import { Order } from './Order';
+import { Inventory } from ".";
 
 export class Assignment extends Record({ products: Map<Customer, Set<Product>>() }) {
 
@@ -66,6 +67,27 @@ export class Assignment extends Record({ products: Map<Customer, Set<Product>>()
     return this.products.keySeq()
       .map(customer => `customer "${customer.name}" -> ${this.productsGivenTo(customer).map(product => `"${product.name}" $${product.cost}`).join(', ')}`)
       .join('\n');
+  }
+
+  isValid(inventory: Inventory): boolean {
+    return this.respectsAllergies() && this.usesAllOrLessThanInventory(inventory);
+  }
+
+  respectsAllergies(): boolean {
+    return !this.products.entrySeq().some(([customer, products]) => customer.isAllergicToAny(products));
+  }
+
+  usesAllOrLessThanInventory(inventory: Inventory): boolean {
+    return inventory.products()
+      .every(product => this.countProductAssignments(product) <= inventory.quantityOf(product))
+  }
+
+  countProductAssignments(product: Product): number {
+    return this.products.keySeq().reduce(
+      (total, customer) => this.hasProductAssignedToCustomer(customer, product) ?
+      total + 1 : total,
+      0
+    );
   }
 
 }
