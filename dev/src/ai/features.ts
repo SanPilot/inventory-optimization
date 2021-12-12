@@ -17,3 +17,7 @@ export const defaultFeatureVectors: List<FeatureVector<ProblemState>> = List([
     [customerSatisfaction, 1, 0]
 //    [unfilledOrders, -1.1, 0]
 ]);
+
+export const satisfactionOnly: List<FeatureVector<ProblemState>> = List([
+  [customerSatisfaction, 1, 0]
+]);
