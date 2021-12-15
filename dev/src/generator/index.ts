@@ -2,16 +2,19 @@ import fc from "fast-check";
 import { Order, Inventory, Product, Customer } from "../model";
 import { List, Set, Map } from "immutable";
 
-export function arbitraryProblem(maxOrderSize: number): fc.Arbitrary<[Order[], Inventory]> {
-  return arbitraryProducts().chain(products =>
-    fc.tuple(fc.array(arbitraryOrder(products, maxOrderSize), {minLength: 1, maxLength: 5}), arbitraryInventory(products)));
+export function arbitraryProblem(maxOrderSize: number, maxProducts=10, maxOrders=10): fc.Arbitrary<[Order[], Inventory]> {
+  return arbitraryProducts(maxProducts).chain(products =>
+    fc.tuple(
+      fc.array(arbitraryOrder(products, maxOrderSize), {minLength: 1, maxLength: maxOrders}),
+      arbitraryInventory(products)
+    ));
 }
 
-function arbitraryProducts(): fc.Arbitrary<Product[]> {
+function arbitraryProducts(maxProducts: number): fc.Arbitrary<Product[]> {
   return fc.set(
     fc.tuple(fc.string(), fc.float({min: 0.1}).map(cost => Math.round(cost * 100) / 100))
       .map(([name, cost]) => new Product({name, cost})),
-    {minLength: 1, maxLength: 5}
+    {minLength: 1, maxLength: maxProducts}
   );
 }
 
