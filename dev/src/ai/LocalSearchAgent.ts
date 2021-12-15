@@ -6,16 +6,27 @@ import { StateNode } from "./Graph";
 import { defaultFeatureVectors, FeatureVector } from "./features";
 import { MaxPriorityQueue, PriorityQueueItem } from "datastructures-js";
 
+// Default heat function - always returns 0.5
+export const defaultHeatFunction = (totalStates: number, statesSinceImprovement: number): number => 0.5
+
+// Heat function slowly reduces the heat over time
+export const slowReduceHeatFunction = (totalStates: number, statesSinceImprovement: number): number => Math.max(0.1, 0.6 - totalStates / 10000)
+
+// Heat function that increases heat when no improvement has been made
+export const increaseHeatFunction = (totalStates: number, statesSinceImprovement: number): number => Math.min(0.6, statesSinceImprovement / 100)
+
 export class LocalSearchAgent implements Agent {
 
   name: string;
 
   private readonly kBeams: number;
   private readonly maxExploredStates: number;
+  private readonly heatFunction: (totalStates: number, statesSinceImprovement: number) => number;
 
-  constructor(kBeams: number, maxExploredStates=100_000) {
+  constructor(kBeams: number, maxExploredStates=100_000, heatFunction: (totalStates: number, statesSinceImprovement: number) => number = defaultHeatFunction) {
     this.kBeams = kBeams;
-    this.name = `Local Search Agent (kBeams: ${kBeams})`;
+    this.heatFunction = heatFunction;
+    this.name = `Local Search Agent (kBeams: ${kBeams}, heatFunction: ${heatFunction.name})`;
     this.maxExploredStates = maxExploredStates;
   }
 
@@ -30,6 +41,7 @@ export class LocalSearchAgent implements Agent {
 
     let bestState: State = state;
     let bestEvaluation: number = state.evaluate(featureVectors);
+    let statesSinceImprovement = 0;
 
     let frontier: MaxPriorityQueue<State> = new MaxPriorityQueue<State>();
     frontier.enqueue(state, bestEvaluation);
@@ -43,6 +55,7 @@ export class LocalSearchAgent implements Agent {
       const current = frontier.dequeue() as PriorityQueueItem<State>;
       visited = visited.add(current.element);
       numStatesExplored++;
+      statesSinceImprovement++;
       current.element.getSuccessors()
         .filter(neighbor => !visited.includes(neighbor))
         .forEach(s => {
@@ -50,8 +63,9 @@ export class LocalSearchAgent implements Agent {
           if (evaluation > bestEvaluation) {
             bestEvaluation = evaluation;
             bestState = s;
+            statesSinceImprovement = 0;
           }
-          frontier.enqueue(s, evaluation);
+          frontier.enqueue(s, evaluation * (this.heatFunction(numStatesExplored, statesSinceImprovement) * (1 + Math.random() * 2)));
         })
 
       if (frontier.size() > this.kBeams) {

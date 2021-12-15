@@ -7,11 +7,12 @@ import fs from "fs";
 import { defaultFeatureVectors } from "./ai/features";
 import { Agent } from "./ai/Agent";
 import { RandomAssignmentAgent } from "./ai/RandomAssignmentAgent";
-import { LocalSearchAgent } from "./ai/LocalSearchAgent";
+import { LocalSearchAgent, defaultHeatFunction, slowReduceHeatFunction, increaseHeatFunction } from "./ai/LocalSearchAgent";
 import { Inventory, Order } from "./model";
 
 const agents: Agent[] = [new RandomAssignmentAgent(), new LocalSearchAgent(1), new LocalSearchAgent(10), new LocalSearchAgent(100), new SearchAgent()];
 const nonOptimalAgents: Agent[] = agents.slice(0, 4);
+const annealingAgents: Agent[] = [new LocalSearchAgent(10, 100_000, defaultHeatFunction), new LocalSearchAgent(10, 100_000, slowReduceHeatFunction), new LocalSearchAgent(10, 100_000, increaseHeatFunction)];
 
 const document = stringify({ columns: ["Agent", "Products", "Orders", "Products * Orders", "Runtime (ms)", "Evaluation"], header: true });
 const file = fs.createWriteStream("tests.csv");
@@ -38,13 +39,13 @@ function runProblem(agents: Agent[], orders: Order[], inventory: Inventory) {
 }
 
 // run all agents on smaller problems
-fc.assert(fc.property(arbitraryProblem(4, {min:1, max: 5}, {min: 1, max: 5}), ([orders, inventory]) => {
-  runProblem(agents, orders, inventory);
-}), { numRuns: 100, seed: 0 });
+// fc.assert(fc.property(arbitraryProblem(4, { min: 1, max: 5 }, { min: 1, max: 5 }), ([orders, inventory]) => {
+//   runProblem(agents, orders, inventory);
+// }), { numRuns: 100, seed: 0 });
 
 // run non-optimal agents on larger problems
-fc.assert(fc.property(arbitraryProblem(4, {min: 6, max: 10}, {min: 6, max: 10}), ([orders, inventory]) => {
-  runProblem(nonOptimalAgents, orders, inventory);
+fc.assert(fc.property(arbitraryProblem(4, { min: 6, max: 10 }, { min: 6, max: 10 }), ([orders, inventory]) => {
+  runProblem(annealingAgents, orders, inventory);
 }), { numRuns: 100, seed: 0 });
 
 document.end();
