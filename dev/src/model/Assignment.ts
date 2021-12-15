@@ -47,8 +47,9 @@ export class Assignment extends Record({ products: Map<Customer, Set<Product>>()
 
   calculateCost(): number {
     return _.sum(
-      Array.from(this.products.values())
-        .flatMap(productsOfCustomer => productsOfCustomer.map(product => product.cost))
+      this.products.valueSeq().toArray().map(
+        products => _.sum(products.toArray().map(product => product.cost))
+      )
     )
   }
 
