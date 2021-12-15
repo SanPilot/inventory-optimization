@@ -11,10 +11,12 @@ export class LocalSearchAgent implements Agent {
   name: string;
 
   private readonly kBeams: number;
+  private readonly maxExploredStates: number;
 
-  constructor(kBeams: number) {
+  constructor(kBeams: number, maxExploredStates=100_000) {
     this.kBeams = kBeams;
     this.name = `Local Search Agent (kBeams: ${kBeams})`;
+    this.maxExploredStates = maxExploredStates;
   }
 
   assign(orders: List<Order>, inventory: Inventory, featureVectors: List<FeatureVector<ProblemState>> = defaultFeatureVectors): StateNode<ProblemState> {
@@ -35,6 +37,9 @@ export class LocalSearchAgent implements Agent {
     let visited = Set<StateNode<ProblemState>>();
 
     while (frontier.size() > 0) {
+      if (numStatesExplored > this.maxExploredStates) {
+        throw new Error("Exceeded maximum number of explored states");
+      }
       const current = frontier.dequeue() as PriorityQueueItem<State>;
       visited = visited.add(current.element);
       numStatesExplored++;

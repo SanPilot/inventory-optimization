@@ -8,6 +8,7 @@ import { defaultFeatureVectors, FeatureVector } from "./features";
 export class SearchAgent implements Agent {
 
   name: string = "Graph Search Agent";
+  private readonly maxExploredStates = 100_000;
 
   assign(orders: List<Order>, inventory: Inventory, featureVectors: List<FeatureVector<ProblemState>> = defaultFeatureVectors): StateNode<ProblemState> {
     const state = new State({
@@ -17,7 +18,7 @@ export class SearchAgent implements Agent {
       inventory,
       originalInventory: inventory
     });
-    return new GraphSearch(featureVectors).depthFirstSearch(state);
+    return new GraphSearch(featureVectors).depthFirstSearch(state, this.maxExploredStates);
   }
 
 }

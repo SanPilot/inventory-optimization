@@ -10,8 +10,8 @@ import { RandomAssignmentAgent } from "./ai/RandomAssignmentAgent";
 import { LocalSearchAgent } from "./ai/LocalSearchAgent";
 import { Inventory, Order } from "./model";
 
-const agents: Agent[] = [new RandomAssignmentAgent(), new LocalSearchAgent(10), new LocalSearchAgent(1000), new SearchAgent()];
-const nonOptimalAgents: Agent[] = agents.slice(0, 3)
+const agents: Agent[] = [new RandomAssignmentAgent(), new LocalSearchAgent(1), new LocalSearchAgent(10), new LocalSearchAgent(100), new SearchAgent()];
+const nonOptimalAgents: Agent[] = agents.slice(0, 4);
 
 const document = stringify({ columns: ["Agent", "Products", "Orders", "Products * Orders", "Runtime (ms)", "Evaluation"], header: true });
 const file = fs.createWriteStream("tests.csv");
@@ -21,14 +21,19 @@ document.pipe(process.stdout);
 function runProblem(agents: Agent[], orders: Order[], inventory: Inventory) {
   agents.forEach(agent => {
     const start = new Date().getTime();
-    const finalState = agent.assign(List(orders), inventory, defaultFeatureVectors);
-    const duration = new Date().getTime() - start;
-    document.write([
-      agent.name, inventory.products().size, orders.length,
-      inventory.products().size * orders.length,
-      duration,
-      finalState.evaluate(defaultFeatureVectors)
-    ]);
+    try {
+      const finalState = agent.assign(List(orders), inventory, defaultFeatureVectors);
+      const duration = new Date().getTime() - start;
+      document.write([
+        agent.name, inventory.products().size, orders.length,
+        inventory.products().size * orders.length,
+        duration,
+        finalState.evaluate(defaultFeatureVectors)
+      ]);
+    }
+    catch {
+      // agent took too long, skip this problem
+    }
   })
 }
 
