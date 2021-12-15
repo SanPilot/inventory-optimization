@@ -44,7 +44,7 @@ export class GraphSearch<T> {
           frontier.push(neighbor)
         });
     }
-    console.log("Explored " + numStatesExplored + " states.");
+    // console.log("Explored " + numStatesExplored + " states.");
     return bestNode;
   }
 

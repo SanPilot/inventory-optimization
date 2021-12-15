@@ -17,28 +17,30 @@ document.pipe(file);
 document.pipe(process.stdout);
 fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
 
+  /*
   const orderInfo: string =
     `Customer stats:
     Total number of orders: ${orders.length}
     Number of products per order (avg, min, max): ${orders.reduce((a, b) => a + b.size, 0) / orders.length}, ${orders.reduce((a, b) => Math.min(a, b.size), Infinity)}, ${orders.reduce((a, b) => Math.max(a, b.size), 0)}
     Number of allergies per customer (avg, min, max): ${orders.reduce((a, b) => a + b.customer.allergies.size, 0) / orders.length}, ${orders.reduce((a, b) => Math.min(a, b.customer.allergies.size), Infinity)}, ${orders.reduce((a, b) => Math.max(a, b.customer.allergies.size), 0)}
     Average preference per customer (avg, min, max): ${orders.reduce((a, b) => a + b.customer.averagePreference(), 0) / orders.length}, ${orders.reduce((a, b) => Math.min(a, b.customer.averagePreference()), Infinity)}, ${orders.reduce((a, b) => Math.max(a, b.customer.averagePreference()), 0)}
-      `;
+      `;*/
 
   // print the problem
+  /*
   console.log(
     `\n\n\nProblem Stats:
   ${inventory.toString()}
   ${orderInfo}`
-  );
+  );*/
 
 
   agents.forEach(agent => {
     const start = new Date().getTime();
     const finalState = agent.assign(List(orders), inventory, defaultFeatureVectors);
     const duration = new Date().getTime() - start;
-    //document.write([agent.name, inventory.products().size, orders.length, inventory.products().size * orders.length, duration, finalState.evaluate(defaultFeatureVectors)]);
-    console.log(`${agent.name} took ${duration}ms to assign ${inventory.products().size} products (${finalState.toResult().assignment.numAssigned()} / ${orders.reduce((acc, order) => acc + order.size, 0)}) to ${orders.length} orders with evaluation ${finalState.evaluate(defaultFeatureVectors)}`);
+    document.write([agent.name, inventory.products().size, orders.length, inventory.products().size * orders.length, duration, finalState.evaluate(defaultFeatureVectors)]);
+    //console.log(`${agent.name} took ${duration}ms to assign ${inventory.products().size} products (${finalState.toResult().assignment.numAssigned()} / ${orders.reduce((acc, order) => acc + order.size, 0)}) to ${orders.length} orders with evaluation ${finalState.evaluate(defaultFeatureVectors)}`);
   })
 }), { numRuns: 100, seed: 0 });
 document.end();

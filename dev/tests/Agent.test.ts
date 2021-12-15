@@ -30,25 +30,41 @@ describe("search agent", () => {
   });
 });
 
+describe("agent validity", () => {
+  test("random agent produces valid assignments", () => {
+    fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      expect(new RandomAssignmentAgent().assign(
+        List(orders), inventory
+      ).toResult().assignment.isValid(List(orders), inventory)).toBeTruthy();
+    }));
+  });
+  test("optimal agent produces valid assignments", () => {
+    fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
+      expect(new SearchAgent().assign(
+        List(orders), inventory
+      ).toResult().assignment.isValid(List(orders), inventory)).toBeTruthy();
+    }));
+  });
+});
+
 describe("compare agents", () => {
   test("random doesn't perform better (in evaluation) than graph search", () => {
     fc.assert(fc.property(arbitraryProblem(4), ([orders, inventory]) => {
       const randomAssignment = new RandomAssignmentAgent().assign(List(orders), inventory);
       const optimalAssignment = new SearchAgent().assign(List(orders), inventory, defaultFeatureVectors);
-      console.log('random:', randomAssignment.toResult().assignment.toString());
-      console.log('optimal:', optimalAssignment.toResult().assignment.toString());
+      expect(randomAssignment.toResult().assignment.isValid(List(orders), inventory)).toBeTruthy();
+      expect(optimalAssignment.toResult().assignment.isValid(List(orders), inventory)).toBeTruthy();
       const optimalEvaluation = optimalAssignment.evaluate(defaultFeatureVectors);
       const randomEvaluation = randomAssignment.evaluate(defaultFeatureVectors);
       try {
-        expect(optimalAssignment)
+        expect(optimalEvaluation)
           .toBeGreaterThanOrEqual(randomEvaluation)
       }
       catch  {
-        expect(randomAssignment.toResult().assignment.isValid(inventory)).toBeTruthy();
-        expect(optimalAssignment.toResult().assignment.isValid(inventory)).toBeTruthy();
         expect(optimalEvaluation).toBeCloseTo(randomEvaluation, 10);
       }
-    }), { seed: 1078364960, path: "2:2:1:1:3:3:4:5:5:4:5:4:5:4:6:4:8:9:8:10:8:8:10:8:8:8:9:8:9:8:10:0:1:1:1:2:1:1:1:1:1:1:2:4:1:2:3:3:1:2:2:2:2:2:2:2:2:1:1:1:1:1:1:1", endOnFailure: true });
+    }), { seed: 147942734, path: "19:90:1:1:2:2:3:3:4:5:4:4:4:4:5", endOnFailure: true }
+    /*{ seed: 1078364960, path: "2:2:1:1:3:3:4:5:5:4:5:4:5:4:6:4:8:9:8:10:8:8:10:8:8:8:9:8:9:8:10:0:1:1:1:2:1:1:1:1:1:1:2:4:1:2:3:3:1:2:2:2:2:2:2:2:2:1:1:1:1:1:1:1", endOnFailure: true }*/);
   })
 });
 

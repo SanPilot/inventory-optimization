@@ -69,12 +69,30 @@ export class Assignment extends Record({ products: Map<Customer, Set<Product>>()
       .join('\n');
   }
 
-  isValid(inventory: Inventory): boolean {
-    return this.respectsAllergies() && this.usesAllOrLessThanInventory(inventory);
+  isValid(orders: List<Order>, inventory: Inventory): boolean {
+    return this.respectsAllergies() &&
+           this.doesNotExceedOrderSizes(orders) &&
+           this.usesAllOrLessThanInventory(inventory);
   }
 
   respectsAllergies(): boolean {
     return !this.products.entrySeq().some(([customer, products]) => customer.isAllergicToAny(products));
+  }
+
+  doesNotExceedOrderSizes(orders: List<Order>): boolean {
+    return this.products.entrySeq().every(([customer, products]) => {
+      const customerOrder = orders.find(order => order.customer.equals(customer));
+      // there cannot be an assignment to a customer that did not order anything
+      if (customerOrder === undefined) {
+        // console.warn("assigned to customer that did not order anything");
+        return false;
+      };
+      if (products.size > customerOrder.size) {
+        // console.warn("assigned more products than customer ordered");
+        return false;
+      }
+      return true;
+    });
   }
 
   usesAllOrLessThanInventory(inventory: Inventory): boolean {

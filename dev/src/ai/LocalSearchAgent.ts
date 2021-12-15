@@ -53,7 +53,7 @@ export class LocalSearchAgent implements Agent {
         frontier = (frontier.toArray() as PriorityQueueItem<State>[]).slice(0, this.kBeams).reduce((acc, cur) => acc.enqueue(cur.element, cur.priority), new MaxPriorityQueue<State>());
       }
     }
-    console.log("Explored " + numStatesExplored + " states.");
+    // console.log("Explored " + numStatesExplored + " states.");
     return bestState;
   }
 

@@ -1,26 +1,28 @@
-import { Record, List, Set, RecordOf } from "immutable";
+import { Record, List, Set, RecordOf, is } from "immutable";
 import { Assignment, Customer, Inventory, Order, orders, Product } from "../model";
 import { StateNode } from "./Graph";
 import _ from "lodash";
 
-export type ProblemState = RecordOf<{ assignment: Assignment, orders: List<Order>, originalOrders: List<Order>, inventory: Inventory }>;
+export type ProblemState = RecordOf<{ assignment: Assignment, orders: List<Order>, originalOrders: List<Order>, inventory: Inventory, originalInventory: Inventory }>;
 
 export class State extends Record({
   assignment: new Assignment(),
   originalOrders: List<Order>(),
   orders: List<Order>(),
-  inventory: new Inventory()
+  inventory: new Inventory(),
+  originalInventory: new Inventory()
 }) implements StateNode<ProblemState> {
 
   getSuccessors(): Set<State> {
     return this.orders
       .filter(order => order.size > 0)
-      .reduce((states, order) => states.concat(
+      .reduce<Set<State>>((states, order) => states.concat(
         this.assignableProducts(order.customer)
           .map(product => this.assignProductToOrder(product, order))
         ),
         Set()
-      );
+      )
+      // .filter(state => state.assignment.isValid(this.originalOrders, this.originalInventory))
   }
 
   private assignableProducts(customer: Customer): Set<Product> {
@@ -39,14 +41,14 @@ export class State extends Record({
         new Order({customer: order.customer, size: order.size - 1})
       ),
       originalOrders: this.originalOrders,
-      inventory: this.inventory.removeProduct(product, 1)
+      inventory: this.inventory.removeProduct(product, 1),
+      originalInventory: this.inventory
     });
   }
 
   private replaceOrder(original: Order, replacement: Order): List<Order> {
     return this.orders.update(
-      this.orders.findIndex(order => order.equals(original)),
-      original,
+      this.orders.findIndex(order => is(order, original)),
       () => replacement
     );
   }
